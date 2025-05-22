@@ -1,0 +1,35 @@
+<ngx-spinner bdColor="rgba(51,51,51,0.8)" size="medium" color="#fff" type="pacman">
+    <p style="color: white" > Loading... </p>
+</ngx-spinner>
+
+<div class="main">
+    <!-- <div class="header">
+        <app-header></app-header>
+    </div> -->
+    <div class="menu">
+        <div class="row">
+            <div class="col-md-12">
+                <img src="assets/img/pickaro.png" width="100%" style="border-radius: 100%;">
+            </div>
+        </div>
+        <app-menu></app-menu>
+        <div class="row">
+            <div class="col-md-12">
+                <button class="btn btn-sm btn-warning" (click)="logout()" title="Logout">
+                    {{loginEmpName}} <i class="fa fa-sign-out" aria-hidden="true"></i>
+                </button>
+            </div>
+        </div> 
+    </div>
+    <div class="content">
+        <div class="router-div">
+            <app-offline-message></app-offline-message>
+            <router-outlet></router-outlet>
+        </div>
+        
+    </div>
+    <!-- <div class="footer">
+        <app-footer></app-footer>
+    </div>  -->
+</div>
+

@@ -1,0 +1,29 @@
+<div class="parent">
+    <div class="row form-field">
+        <form #loginForm="ngForm" (ngSubmit)="login()">
+            <div class="col-md-12 text-center">
+                <img src="assets/img/pickaro1.png">
+            </div>
+            <br>
+            <div class="col-md-12">
+                <label class="text-mealsfly-green">Username *</label>
+                <input type="text" [(ngModel)]="loginModel.username" placeholder="Username" required 
+                class="form-control" name="username"/>
+            </div>
+            <br>
+            <div class="col-md-12">
+                <label class="text-mealsfly-green">Password *</label>
+                <input [type]="isShow ? 'text' : 'password'" [(ngModel)]="loginModel.password" placeholder="Password" required 
+                class="form-control" name="password"/>
+                <label>
+                    <input type="checkbox" (change)="isShow = !isShow"/> &nbsp;
+                    <i [class]="isShow ? 'fa fa-eye' : 'fa fa-eye-slash'"></i>
+                </label>
+            </div>
+            <br>
+            <div class="col-md-12">
+                <button class="btn btn-sm btn-default" style="background-color: #401c0a;color: white;" [disabled]='loginForm.form.invalid' [class.activebutton]='!loginForm.form.invalid'>Login</button>
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,357 @@
+<div class="row">
+    <div class="col-md-2">
+        <label>From Date <i (click)="filterStartDate=''" class="fa fa-refresh" aria-hidden="true"></i></label>
+        <input type="date" class="form-control" [(ngModel)]="filterStartDate"/>
+    </div>
+    <div class="col-md-2">
+        <label>To Date <i (click)="filterEndDate=''" class="fa fa-refresh" aria-hidden="true"></i></label>
+        <input type="date" class="form-control" [min]="filterStartDate" [(ngModel)]="filterEndDate"/>
+    </div>
+    <div class="col-md-4">
+        <label style="display: block;color: transparent;">0</label>
+        <button class="btn btn-sm btn-danger" (click)="getOrders()">
+            <i class="fa fa-filter" aria-hidden="true"></i> Filter
+        </button>
+        &nbsp; 
+        <button class="btn btn-sm btn-danger" (click)="exportOrder()" *ngIf="searchOrderList.length != 0">
+            <i class="fa fa-download" aria-hidden="true"></i> Export
+        </button>
+    </div>
+</div>
+<br>
+<div class="row">
+    <div class="col-md-12">
+        <table class="table table-borderd table-striped table-hover my-table">
+            <thead>
+                <tr>
+                    <th *ngFor="let cn of columnName" style="text-align: center;">{{cn}}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td *ngFor="let cd of columnData" style="text-align: center;">{{cd}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <table class="table table-borderd table-striped table-hover my-table">
+            <thead>
+                <tr>
+                    <th style="width: 100px;">
+                        Order Id &nbsp; 
+                    </th>
+                    <th>Restaurant</th>
+                    <th>Customer</th>
+                    <th>Primary Mobile</th>
+                    <th>Rider</th>
+                    <th style="width: 130px;">Payment Mode</th>
+                    <th style="width: 130px;">Grand Total</th>
+                    <th style="width: 130px;">Self Pickup</th>
+                    <th style="width: 150px;">Status</th>
+                    <th>Order Date</th>
+                    <th *ngIf="loginEmpRoleId === '1'"></th>
+                </tr>
+                <tr>
+                    <th>
+                        <input type="text" class="form-control" placeholder="Order Id" [(ngModel)]="searchOrderId"
+                        (keyup)="searchOrder($event)"/>
+                    </th>
+                    <th>
+                        <input type="text" class="form-control" placeholder="Restaurant" [(ngModel)]="searchRestaurant"
+                        (keyup)="searchOrder($event)"/>
+                    </th>
+                    <th>
+                        <input type="text" class="form-control" placeholder="Customer" [(ngModel)]="searchCustomer"
+                        (keyup)="searchOrder($event)"/>
+                    </th>
+                    <th>
+                        <input type="text" class="form-control" placeholder="Primary Mobile" [(ngModel)]="searchPrimaryMobile"
+                        (keyup)="searchOrder($event)"/>
+                    </th>
+                    <th>
+                        <input type="text" class="form-control" placeholder="Rider" [(ngModel)]="searchRider"
+                        (keyup)="searchOrder($event)"/>
+                    </th>
+                    <th>
+                        <input type="text" class="form-control" placeholder="Payment Mode" [(ngModel)]="searchPaymentMode"
+                        (keyup)="searchOrder($event)"/>
+                    </th>
+                    <th>
+                        <input type="text" class="form-control" placeholder="Grand Total" [(ngModel)]="searchGrandTotal"
+                        (keyup)="searchOrder($event)"/>
+                    </th>
+                    <th>
+                        <input type="text" class="form-control" placeholder="Self Pickup" [(ngModel)]="searchPickup"
+                        (keyup)="searchOrder($event)"/>
+                    </th>
+                    <th>
+                        <input type="text" class="form-control" placeholder="Status" [(ngModel)]="searchStatus"
+                        (keyup)="searchOrder($event)"/>
+                    </th>
+                    <th>
+                        <input type="text" class="form-control" placeholder="Order Date" [(ngModel)]="searchDatatime"
+                        (keyup)="searchOrder($event)"/>
+                    </th>
+                    <th *ngIf="loginEmpRoleId === '1'"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let o of searchOrderList; let rowIndex = index" class="table-row data-{{rowIndex+1}}">
+                    <td (click)="getOrderItem(o)" title="Click to view details of {{o.orderId}} order id" style="cursor: pointer;">
+                        {{o.orderId}} &nbsp;
+                        <i class="fa fa-eye" aria-hidden="true"></i>
+                    </td>
+                    <td>{{o.restName}}</td>
+                    <td>{{o.custName}}</td>
+                    <td>{{o.primaryMobile}}</td>
+                    <td>{{o.riderInfo}}</td>
+                    <td>{{o.paymentMode}}</td>
+                    <td class="price-align">
+                        <i class="fa fa-inr" aria-hidden="true"></i> {{o.grandTotal}}
+                    </td>
+                    <td>
+                        {{o.selfPickUp}} &nbsp;
+                        <!-- <button *ngIf="o.receiveBtn" class="btn btn-sm btn-success bg-mf-green" (click)="changeOrderStatus(o.orderId)">
+                            <i class="fa fa-check-square bg-mf-green" aria-hidden="true"></i>
+                        </button> -->
+
+                        <i *ngIf="o.receiveBtn" title="Order received" class="fa fa-check-square" aria-hidden="true" (click)="changeOrderStatus(o.orderId)"></i>
+                    </td>
+                    <td>
+                        <span [style.color]="o.statusColor">{{o.statusTxt}}</span>
+                    </td>
+                    <td>{{o.orderDatetime}}</td>
+                    <td *ngIf="loginEmpRoleId === '1'">
+                        <i class="fa fa-trash" aria-hidden="true" *ngIf="o.status !=5" (click)="deleteOrder(o.orderId)"></i>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="row" *ngIf="searchOrderList.length == 0">
+    <div class="col-md-12">
+        <h4 class="text-warning text-center">
+            <i>! No record found</i>
+        </h4>
+    </div>
+</div>
+
+<app-pagination *ngIf="searchOrderList.length !=0" 
+        [itemCount]="searchOrderList.length" 
+        [perPageRecord]="100" 
+        [showPage]="10">
+</app-pagination>
+
+<div id="viewOrderModal" data-keyboard="false" data-bs-backdrop="static" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-md" >
+		<div class="modal-content">
+			<div class="modal-header" style="padding: 5px !important;">
+				<h6 class="modal-title">Order : {{viewOrderId}} </h6>
+				<button class="btn btn-sm btn-danger" (click)="closeAnyModal('viewOrderModal')">Close</button>
+			</div>
+			<div class="modal-body" style="padding: 5px;">
+                <div class="row" style="font-size: 12px;">
+                    <div class="col-md-12 tx-bold">
+                        Restaurant Name
+                    </div>
+                    <div class="col-md-2"></div>
+                    <div class="col-md-10">
+                        {{viewOrderObj.restName}}
+                    </div>
+                    <div class="col-md-12 tx-bold">
+                        Delivery Address
+                    </div>
+                    <div class="col-md-2"></div>
+                    <div class="col-md-10">
+                        {{viewOrderObj.deliveryAddress}}, <a href="tel:{{viewOrderObj.deliveryMobile}}">{{viewOrderObj.deliveryMobile}}</a>
+                    </div>
+                    <div *ngIf="viewOrderObj.riderId == 0;else other_content"></div>
+                    <ng-template #other_content>
+                        <div class="col-md-12 tx-bold">
+                            Rider Info
+                        </div>
+                        <div class="col-md-2"></div>
+                        <div class="col-md-10">Name: {{viewOrderObj.riderName}}</div>
+                        <div class="col-md-2"></div>
+                        <div class="col-md-10">Mobile: 
+                            <a href="tel:{{viewOrderObj.riderMobile}}">{{viewOrderObj.riderMobile}}</a>
+                        </div>
+                    </ng-template>
+                    <div class="col-md-12 tx-bold">
+                        Order Status
+                    </div>
+                    <div class="col-md-2"></div>
+                    <div class="col-md-10">
+                        <span [style.color]="viewOrderObj.statusColor">{{viewOrderObj.statusTxt}}</span>
+                    </div>
+                    <div class="col-md-12 tx-bold" *ngIf="viewOrderObj.cancellationMsg != null">
+                        Cancellation Reason
+                    </div>
+                    <div class="col-md-2" *ngIf="viewOrderObj.cancellationMsg != null"></div>
+                    <div class="col-md-10" *ngIf="viewOrderObj.cancellationMsg != null">
+                        {{viewOrderObj.cancellationMsg}}
+                    </div>
+                    <div class="col-md-12 tx-bold" *ngIf="viewOrderObj.instruction != ''">
+                        Instruction
+                    </div>
+                    <div class="col-md-2" *ngIf="viewOrderObj.instruction != ''"></div>
+                    <div class="col-md-10" *ngIf="viewOrderObj.instruction != ''">
+                        {{viewOrderObj.instruction}}
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-12" style="text-align: center;font-size: 13px;">
+                         ----Order Summary : Total Items {{orderItemList.length}} ----
+                    </div>
+                </div>
+                <div class="item-div">
+                    <table class="table table-borderd my-table">
+                        <tbody>
+                            <tr *ngFor="let orderItem of orderItemList">
+                                <td>
+                                    <div class="nonEdit-{{orderItem.orderItemId}}">
+                                        {{orderItem.itemName}} / 
+                                        {{orderItem.size}} * {{orderItem.quantity}}
+                                        &nbsp;<i (click)="editAny('nonEdit','edit',orderItem)" title="Edit Item" class="fa fa-pencil" aria-hidden="true"></i>
+                                        &nbsp; | &nbsp;
+                                        <label>
+                                            <input type="checkbox" (click)="checkDeleteOrderItem($event, orderItem)"/> &nbsp; <i class="fa fa-trash" aria-hidden="true"></i>
+                                        </label>
+                                        
+                                    </div>
+                                    <div class="edit edit-{{orderItem.orderItemId}}">
+                                        {{orderItem.itemName}} / 
+                                        {{orderItem.size}} * 
+                                        <select (change)="changeItemQty($event, orderItem)">
+                                            <option [value]="c" *ngFor="let c of createRange(orderItem.quantity)" [selected]="c == orderItem.quantity">{{c}}</option>
+                                        </select>
+                                        <!-- &nbsp;<i (click)="dis(1,rest)" class="fa fa-floppy-o" aria-hidden="true"></i> -->
+                                        &nbsp;<i (click)="cancelAny('edit','nonEdit',orderItem)" class="fa fa-times-circle" aria-hidden="true"></i>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div style="text-align: right;">
+                                        <i class="fa fa-inr" aria-hidden="true"></i>
+                                        {{orderItem.price}}
+                                    </div>
+                                    <!-- <div class="edit edit-{{orderItem.orderItemId}}" style="text-align: right;">
+                                        <i class="fa fa-inr" aria-hidden="true"></i>
+                                        &nbsp; <input type="text" [readonly]=true id="newItemPrice-{{orderItem.orderItemId}}" [value]="orderItem.price" style="width: 50px;"/>
+                                    </div> -->
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <table class="table table-borderd my-table">
+                    <tbody>
+                        <tr>
+                            <td>Total Price</td>
+                            <td>
+                                <div style="text-align: right;">
+                                    <i class="fa fa-inr" aria-hidden="true"></i>
+                                    <span *ngIf="newTotalPrice == 0; else totalPrice">
+                                        {{viewOrderObj.totalPrice}}
+                                    </span>
+                                    <ng-template #totalPrice>
+                                        {{newTotalPrice}}
+                                    </ng-template>
+                                    
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Delivery Charge</td>
+                            <td>
+                                <div style="text-align: right;">
+                                    <i class="fa fa-inr" aria-hidden="true"></i>
+                                    {{viewOrderObj.deliveryCharge}}
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Grand Total</td>
+                            <td>
+                                <div style="text-align: right;">
+                                    <i class="fa fa-inr" aria-hidden="true"></i>
+                                    <span *ngIf="newGrandTotal == 0; else grandTotal">
+                                        {{viewOrderObj.grandTotal}}
+                                    </span>
+                                    <ng-template #grandTotal>
+                                        {{newGrandTotal}}
+                                    </ng-template>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div style="text-align: right;" *ngIf="viewOrderObj.status !=5">
+                    <button *ngIf="editCount != 0" class="btn btn-sm btn-success bg-mf-green" (click)="editOrderItem()">Save</button>
+                    <button *ngIf="deleteItemArr.length != 0" class="btn btn-sm btn-danger text-white" (click)="deleteOrderItem()">Delete</button>
+                </div>
+                    
+                
+
+                <table class="table table-borderd table-striped my-table" *ngIf="false">
+                    <thead>
+                        <tr>
+                            <th>Restaurant</th>
+                            <th>Payment Mode</th>
+                            <th>Status</th>
+                            <th *ngIf="viewOrderObj.instruction != ''">Instruction</th>
+                            <th>
+                                Grand Total &nbsp; 
+                                <i class="fa fa-info-circle"></i>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>{{viewOrderObj.restName}}</td>
+                            <td>{{viewOrderObj.paymentMode}}</td>
+                            <td>{{viewOrderObj.statusTxt}}</td>
+                            <td *ngIf="viewOrderObj.instruction != ''">{{viewOrderObj.instruction}}</td>
+                            <td class="price-align">
+                                <i class="fa fa-inr" aria-hidden="true"></i>
+                                {{viewOrderObj.grandTotal}}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <table class="table table-borderd table-striped my-table" *ngIf="false">
+                    <thead>
+                        <tr>
+                            <th>Item Name</th>
+                            <th>Size</th>
+                            <th>Quantity</th>
+                            <th style="text-align: right;">Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let orderItem of orderItemList">
+                            <td>{{orderItem.itemName}}</td>
+                            <td>{{orderItem.size}}</td>
+                            <td>{{orderItem.quantity}}</td>
+                            <td>
+                                <div style="text-align: right;">
+                                    <i class="fa fa-inr" aria-hidden="true"></i>
+                                    {{orderItem.price}}
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+			</div>
+			<!-- <div class="modal-footer">
+			</div> -->
+		</div>	
+	</div>
+</div>

@@ -1,0 +1,132 @@
+
+// Custom Theming for Angular Material
+// For more information: https://material.angular.io/guide/theming
+@use '@angular/material' as mat;
+// Plus imports for other components in your app.
+
+// Include the common styles for Angular Material. We include this here so that you only
+// have to load a single css file for Angular Material in your app.
+// Be sure that you only ever include this mixin once!
+@include mat.core();
+
+// Define the palettes for your theme using the Material Design palettes available in palette.scss
+// (imported above). For each palette, you can optionally specify a default, lighter, and darker
+// hue. Available color palettes: https://material.io/design/color/
+$Pickaro-primary: mat.define-palette(mat.$indigo-palette);
+$Pickaro-accent: mat.define-palette(mat.$pink-palette, A200, A100, A400);
+
+// The warn palette is optional (defaults to red).
+$Pickaro-warn: mat.define-palette(mat.$red-palette);
+
+// Create the theme object. A theme consists of configurations for individual
+// theming systems such as "color" or "typography".
+$Pickaro-theme: mat.define-light-theme((
+  color: (
+    primary: $Pickaro-primary,
+    accent: $Pickaro-accent,
+    warn: $Pickaro-warn,
+  )
+));
+
+// Include theme styles for core and each component used in your app.
+// Alternatively, you can import and @include the theme mixins for each component
+// that you are using.
+@include mat.all-component-themes($Pickaro-theme);
+@import "mealsfly";
+
+/* You can add global styles to this file, and also import other style files */
+html, body{
+    height: 100%;
+}
+::-webkit-scrollbar {
+  width: 5px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: $mealsFlyGreen; 
+  border-radius: 5px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: $mealsFlyGreen; 
+}
+.text-mealsfly-red{
+    color: $mealsFlyRed;
+}
+.text-mealsfly-green{
+  color: $mealsFlyGreen;
+}
+.bg-mf-green{
+  background: $mealsFlyGreen;
+}
+thead tr th{
+  background: $mealsFlyGreen !important;
+  color: white !important;
+}
+.row{
+    margin: 0px;
+}
+.fa{
+  cursor: pointer;
+  font-size: 15px !important;
+}
+// html, body { height: 100%; }
+// body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.cdk-overlay-container {
+  position: fixed;
+  z-index: 10000;
+}
+.mat-mdc-snack-bar-container {
+  // &.blue-snackbar {
+  //   --mdc-snackbar-container-color: #2196f3;
+  //   --mat-mdc-snack-bar-button-color: #fff;
+  //   --mdc-snackbar-supporting-text-color: #fff;
+  // };
+  &.success-snackbar {
+    --mdc-snackbar-container-color: #00af50;
+    --mat-mdc-snack-bar-button-color: #fff;
+    --mdc-snackbar-supporting-text-color: #fff;
+  }
+  &.error-snackbar {
+    --mdc-snackbar-container-color: #fe0000;
+    --mat-mdc-snack-bar-button-color: #fff;
+    --mdc-snackbar-supporting-text-color: #fff;
+  }
+  &.warning-snackbar {
+    --mdc-snackbar-container-color: #fac014;
+    --mat-mdc-snack-bar-button-color: #fff;
+    --mdc-snackbar-supporting-text-color: #fff;
+  }
+}
+.my-table{
+  font-size: 12px;
+}
+.my-table thead {
+  position: -webkit-sticky; 
+  position: sticky;
+  top: 0;
+  z-index: 10; 
+}
+.form-control{
+  font-size: 12px !important;
+}
+label{
+  font-size: 12px !important;
+  // color: $mealsFlyRed;
+}
+// label .fa{
+//   color: black !important;
+//   font-size: 14px !important;
+// }
+.img-thumbnail{
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+}
+.table-row{
+  display: none;
+  font-size: 14px;
+}
+.price-align{
+  text-align: right;
+}

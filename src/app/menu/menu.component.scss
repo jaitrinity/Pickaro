@@ -1,0 +1,27 @@
+@import "../../mealsfly";
+.unselectable{
+    margin: 10px 0px;
+    list-style-type: none;
+    padding: 0px;
+    height: 60%;
+    overflow: auto;
+}
+.unselectable li{
+    width: 100%;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    padding: 5px;
+    color: white;
+    cursor: pointer;
+    border-bottom: 1px solid white;
+    border-radius: 5px;
+}
+.unselectable li:hover{
+    background: $mealsFlyRed;
+}
+.activeRoute{
+    background-color: $mealsFlyRed;
+    color: $mealsFlyGreen !important;
+    font-weight: 500;
+}

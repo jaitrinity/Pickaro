@@ -1,0 +1,282 @@
+<div class="row">
+    <!-- <div class="col-md-3">
+        <label>Pincode</label>
+        <select class="form-control" [(ngModel)]="filterPincode" (change)="filterRestaurant()">
+            <option value="">Select</option>
+            <option *ngFor="let rp of restPincodeList" [value]="rp">{{rp}}</option>
+        </select>
+    </div> -->
+    <div class="col-md-12">
+        <label style="display: block;color: transparent;">0</label>
+        <button class="btn btn-sm btn-info text-white" (click)="openAnyModal('newRestModal')">
+            <i class="fa fa-plus-circle" aria-hidden="true" ></i> New Restaurant
+        </button>
+        &nbsp;
+        <button class="btn btn-sm btn-danger" (click)="exportRestaurant()" *ngIf="searchRestList.length != 0">
+            <i class="fa fa-download" aria-hidden="true"></i> Export
+        </button>
+    </div>
+</div>
+<br>
+
+<div class="row">
+    <div class="col-md-12">
+        <table class="table table-borderd table-striped my-table">
+            <thead>
+                <tr>
+                    <th style="width: 120px;">Priority</th>
+                    <th>Name</th>
+                    <th style="width: 200px">Open Time - Close Time</th>
+                    <th>Rider</th>
+                    <th style="width: 120px" title="Minimum Order Price">MOP <i class="fa fa-info-circle" aria-hidden="true"></i> </th>
+                    <th style="width: 100px">Status</th>
+                    <th style="width: 100px">Enable/Disable</th>
+                    <th style="width: 100px">Pincode</th>
+                    <th>View</th>
+                </tr>
+                <tr>
+                    <th>
+                        <input type="text" class="form-control" placeholder="Priority" [(ngModel)]="searchRestPriority"
+                        (keyup)="searchRestaurant($event)"/>
+                    </th>
+                    <th>
+                        <input type="text" class="form-control" placeholder="Name" [(ngModel)]="searchRestName"
+                        (keyup)="searchRestaurant($event)"/>
+                    </th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th>
+                        <input type="text" class="form-control" placeholder="Status" [(ngModel)]="searchRestStatus"
+                        (keyup)="searchRestaurant($event)"/>
+                    </th>
+                    <th>
+                        <input type="text" class="form-control" placeholder="Enable" [(ngModel)]="searchRestEnable"
+                        (keyup)="searchRestaurant($event)"/>
+                    </th>
+                    <th>
+                        <input type="text" class="form-control" placeholder="Pincode" [(ngModel)]="searchRestPincode"
+                        (keyup)="searchRestaurant($event)"/>
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let rest of searchRestList; let rowIndex = index" class="table-row data-{{rowIndex+1}}">
+                    <td>
+                        <div class="displayOrderLbl" id="label-{{rest.restId}}">
+                            <input type="text" style="width: 40px;" [value]="rest.displayOrder" [disabled]="true"/>
+                            &nbsp;<i (click)="dis(0,rest)" title="Edit Priority" class="fa fa-pencil" aria-hidden="true"></i>
+                        </div>
+                        <div class="displayOrderTxt" id="text-{{rest.restId}}">
+                            <input type="text" style="width: 40px;" id="new-{{rest.restId}}" [OnlyNumber]="true" (keyup.enter)="dis(1,rest)"/>
+                            &nbsp;<i (click)="dis(1,rest)" class="fa fa-floppy-o" aria-hidden="true"></i>
+                            &nbsp;<i (click)="dis(2,rest)" class="fa fa-times-circle" aria-hidden="true"></i>
+                        </div>
+                    </td>
+                    <td>{{rest.name}}</td>
+                    <td>{{rest.openCloseTime}}</td>
+                    <td>
+                        <div class="riderLbl" id="labelRider-{{rest.restId}}">
+                            <span *ngFor="let r of rest.riderList">
+                                {{r.paramDesc}}, 
+                            </span>
+                            &nbsp;<i (click)="riderAction(0,rest)" title="Edit Rider" class="fa fa-pencil" aria-hidden="true"></i>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="mopLbl" id="labelMop-{{rest.restId}}">
+                            <i class="fa fa-inr" aria-hidden="true"></i>
+                            <input type="text" style="width: 40px;" [value]="rest.mop" [disabled]="true"/>
+                            &nbsp;<i (click)="moprice(0,rest)" title="Edit MOP" class="fa fa-pencil" aria-hidden="true"></i>
+                        </div>
+                        <div class="mopTxt" id="textMop-{{rest.restId}}">
+                            <i class="fa fa-inr" aria-hidden="true"></i>
+                            <input type="text" style="width: 40px;" id="newMop-{{rest.restId}}" [OnlyNumber]="true" (keyup.enter)="moprice(1,rest)"/>
+                            &nbsp;<i (click)="moprice(1,rest)" class="fa fa-floppy-o" aria-hidden="true"></i>
+                            &nbsp;<i (click)="moprice(2,rest)" class="fa fa-times-circle" aria-hidden="true"></i>
+                        </div>
+
+                        <!-- {{rest.mop}} -->
+                    </td>
+                    <td>
+                        <span *ngIf="rest.status == 'Open'" class="text-mealsfly-green">
+                            {{rest.status}} &nbsp;
+                            <label (click)="changeRestStatus(rest.restId, 0, 'Close')" title="Close">
+                                <i class="fa fa-toggle-off" aria-hidden="true"></i>
+                            </label>
+                        </span>
+                        <span *ngIf="rest.status == 'Close'">
+                            {{rest.status}} &nbsp;
+                            <label (click)="changeRestStatus(rest.restId, 1, 'Open')" title="Open">
+                                <i class="fa fa-toggle-on" aria-hidden="true"></i>
+                            </label>
+                        </span>
+                    </td>
+                    <td>
+                        <span *ngIf="rest.enable == 0 || rest.enable == 2">
+                            {{rest.enableTxt}} &nbsp;
+                            <label (click)="changeRestStatus(rest.restId, 1, 'Enable')" title="Enable">
+                                <i class="fa fa-toggle-on" aria-hidden="true"></i>
+                            </label>
+                        </span>
+                        <span *ngIf="rest.enable == 1;" class="text-mealsfly-green">
+                            {{rest.enableTxt}} &nbsp;
+                            <label (click)="changeRestStatus(rest.restId, 2, 'Disable')" title="Disable">
+                                <i class="fa fa-toggle-off" aria-hidden="true"></i>
+                            </label>
+                        </span>
+                    </td>
+                    <td>{{rest.pincode}}</td>
+                    <td>
+                        <label (click)="getRestItem(rest)" title="View items">
+                            <i class="fa fa-eye" aria-hidden="true"></i>
+                        </label>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<app-pagination *ngIf="searchRestList.length !=0" 
+    [itemCount]="searchRestList.length" 
+    [perPageRecord]="50" 
+    [showPage]="10">
+</app-pagination>
+
+<div id="riderEditModal" data-keyboard="false" data-bs-backdrop="static" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-md" >
+		<div class="modal-content">
+			<div class="modal-header" style="padding: 10px !important;">
+				<h5 class="modal-title"></h5>
+				<button class="btn btn-sm btn-danger" (click)="riderAction(2,restObj)">Close</button>
+			</div>
+			<div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <ng-multiselect-dropdown [placeholder]="'Select'" [settings]="multiSelectropdownSettings" 
+                        [data]="riderList" [(ngModel)]="editSelectedRiderList"> 
+                        </ng-multiselect-dropdown>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2">
+                        <label style="display: block;color: transparent;">0</label>
+                        <button class="btn btn-sm btn-success bg-mf-green" (click)="riderAction(1,restObj)">Save</button>
+                    </div>
+                </div>
+			</div>
+			<div class="modal-footer">
+			</div>
+		</div>	
+	</div>
+</div>
+
+<div id="imageModal" data-keyboard="false" data-bs-backdrop="static" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-md" >
+		<div class="modal-content">
+			<div class="modal-header" style="padding: 10px !important;">
+				<h5 class="modal-title"></h5>
+				<button class="btn btn-sm btn-danger" (click)="closeAnyModal('imageModal')">Close</button>
+			</div>
+			<div class="modal-body">
+                <div class="row">
+                    <div class="col-md-1">
+                      <button class="btn btn-sm btn-danger turn" title="Rotate image">
+                        <i class="fa fa-repeat" aria-hidden="true"></i>
+                      </button>
+                    </div>
+                    <div class="col-md-11" style="max-height: 505px !important;overflow: auto;">
+                      <img [src]="viewImgUrl" class="viewImg" width="400px" height="400px"/>
+                    </div>
+                </div>
+			</div>
+			<div class="modal-footer">
+			</div>
+		</div>	
+	</div>
+</div>
+
+<div id="newRestModal" data-keyboard="false" data-bs-backdrop="static" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-md" >
+		<div class="modal-content">
+			<div class="modal-header" style="padding: 10px !important;">
+				<h5 class="modal-title"></h5>
+				<button class="btn btn-sm btn-danger" (click)="closeAnyModal('newRestModal')">Close</button>
+			</div>
+			<div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <span class="text-warning">! {{restImgInfo}}</span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                      <label>Name *</label>
+                      <input type="text" class="form-control resetField" [(ngModel)]="restName"/>
+                    </div>
+                    <div class="col-md-6">
+                        <label>Mobile *</label>
+                        <input type="text" class="form-control resetField" [(ngModel)]="restMobile" [OnlyNumber]="true" maxlength="10"/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label>Address</label>
+                        <textarea rows="4" class="form-control resetField" style="resize: none;" [(ngModel)]="restAddress"></textarea>
+                    </div>
+                    <div class="col-md-6">
+                        <label>Latlong *</label>
+                        <input type="text" class="form-control resetField" [(ngModel)]="restLatLong"/>
+
+                        <label>Pincode *</label>
+                        <input type="text" class="form-control resetField" [(ngModel)]="restPincode" [OnlyNumber]="true" maxlength="6"/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label>Open Time</label>
+                        <input type="time" class="form-control resetField" [(ngModel)]="restOpenTime"/>
+                    </div>
+                    <div class="col-md-6">
+                        <label>Close Time</label>
+                        <input type="time" class="form-control resetField" [(ngModel)]="restCloseTime"/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label>Image</label>
+                        <input type="file" id="restImageBase64" (change)="changeListener($event, 'restImage')" accept=".jpg,.jpeg,.png" class="form-control resetField" />
+                        <input type="hidden" [(ngModel)]="restImageBase64" class="resetField"/>
+                    </div>
+                    <div class="col-md-6">
+                        <label>Banner</label>
+                        <input type="file" id="restBannerBase64" (change)="changeListener($event, 'restBanner')" accept=".jpg,.jpeg,.png" class="form-control resetField" />
+                        <input type="hidden" [(ngModel)]="restBannerBase64" class="resetField"/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label>Minimum Order Price *</label>
+                        <input type="text" class="form-control resetField" [(ngModel)]="mop" [OnlyNumber]="true"/>
+                    </div>
+                
+                    <div class="col-md-6">
+                        <label>Rider *</label>
+                        <ng-multiselect-dropdown [placeholder]="'Select'" [settings]="multiSelectropdownSettings" 
+                        [data]="riderList" [(ngModel)]="selectedRiderList"> 
+                        </ng-multiselect-dropdown>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2">
+                        <label style="display: block;color: transparent;">0</label>
+                        <button class="btn btn-sm btn-success bg-mf-green" (click)="saveRestaurant()">Save</button>
+                    </div>
+                </div>
+			</div>
+			<div class="modal-footer">
+			</div>
+		</div>	
+	</div>
+</div>

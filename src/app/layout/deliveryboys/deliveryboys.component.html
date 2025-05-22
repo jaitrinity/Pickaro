@@ -1,0 +1,202 @@
+<div class="row">
+    <div class="col-md-3">
+        <label>Name *</label>
+        <input type="text" [(ngModel)]="name" class="form-control" placeholder="Name"/>
+    </div>
+    <div class="col-md-3">
+        <label>Mobile *</label>
+        <input type="text" [(ngModel)]="mobile" class="form-control" [OnlyNumber]="true" maxlength="10" placeholder="Mobile"/>
+    </div>
+
+    <div class="col-md-3">
+        <label>Aadhar No *</label>
+        <input type="text" [(ngModel)]="aadharNo" class="form-control" [OnlyNumber]="true" maxlength="12" placeholder="Aadhar No"/>
+    </div>
+    <div class="col-md-3">
+        <label>Aadhar Pic *</label>
+        <input type="file" (change)="changeListener($event, '0')" id="file_aadharBase64" accept=".jpg,.jpeg,.png" class="form-control" />
+        <input type="hidden" [(ngModel)]="aadharBase64"/>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-3">
+        <label>PAN No *</label>
+        <input type="text" [(ngModel)]="panNo" class="form-control" maxlength="10" placeholder="PAN No"/>
+    </div>
+    <div class="col-md-3">
+        <label>PAN Pic *</label>
+        <input type="file" (change)="changeListener($event, '1')" id="file_panBase64" accept=".jpg,.jpeg,.png" class="form-control" />
+        <input type="hidden" [(ngModel)]="panBase64"/>
+    </div>
+
+    <div class="col-md-3">
+        <label>Lat-Long *</label>
+        <input type="text" [(ngModel)]="latLong" class="form-control" placeholder="Enter current rider location Lat-Long"/>
+    </div>
+
+    <div class="col-md-3">
+        <label style="display: block;color: transparent;">0</label>
+        <button class="btn btn-sm btn-success bg-mf-green" (click)="addRider()">
+            <i class="fa fa-plus-circle" aria-hidden="true" ></i> Add Rider
+        </button>
+    </div>
+</div>
+<br>
+<div class="row">
+    <div class="col-md-12">
+        <table class="table table-borderd table-striped my-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Mobile</th>
+                    <th>Aadhar No</th>
+                    <th>Aadhar</th>
+                    <th>PAN No</th>
+                    <th>PAN</th>
+                    <th>Action</th>
+                </tr>
+                <tr>
+                    <th>
+                        <input type="text" class="form-control" placeholder="Name" [(ngModel)]="searchRiderName"
+                        (keyup)="searchRider($event)"/>
+                    </th>
+                    <th>
+                        <input type="text" class="form-control" placeholder="Mobile" [(ngModel)]="searchMobile"
+                        (keyup)="searchRider($event)"/>
+                    </th>
+                    <th>
+                        <input type="text" class="form-control" placeholder="Adhar No" [(ngModel)]="searchAadharNo"
+                        (keyup)="searchRider($event)"/>
+                    </th>
+                    <th></th>
+                    <th>
+                        <input type="text" class="form-control" placeholder="PAN No" [(ngModel)]="searchPanNo"
+                        (keyup)="searchRider($event)"/>
+                    </th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let rider of searchRiderList; let rowIndex = index" class="table-row data-{{rowIndex+1}}">
+                    <td>{{rider.name}}</td>
+                    <td>{{rider.mobile}}</td>
+                    <td>{{rider.aadharNo}}</td>
+                    <td>
+                        <label *ngIf="rider.aadharPic != ''" (click)="viewImage(rider.aadharPic)">
+                            <img [src]="rider.aadharPic" class="img-thumbnail"/>
+                        </label>
+                        
+                    </td>
+                    <td>{{rider.panNo}}</td>
+                    <td>
+                        <label *ngIf="rider.panPic != ''" (click)="viewImage(rider.panPic)">
+                            <img [src]="rider.panPic" class="img-thumbnail"/>
+                        </label>
+                        
+                    </td>
+                    <td>
+                        <label (click)="editRider(rider)" title="Edit">
+                            <i class="fa fa-pencil" aria-hidden="true"></i>
+                        </label>
+                        &nbsp;
+                        <label *ngIf="rider.isActive == 1;" (click)="actDeactRider(rider.riderId, 0, 'Deactive')" title="Deactive">
+                            <i class="fa fa-times-circle-o" aria-hidden="true"></i>
+                        </label>
+                        <label *ngIf="rider.isActive == 0;" (click)="actDeactRider(rider.riderId, 1, 'Active')" title="Active">
+                            <i class="fa fa-check-circle-o" aria-hidden="true"></i>
+                        </label>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<app-pagination *ngIf="searchRiderList.length !=0" [itemCount]="searchRiderList.length" [perPageRecord]="5" [showPage]="10"></app-pagination>
+
+<div id="imageModal" data-keyboard="false" data-bs-backdrop="static" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-md" >
+		<div class="modal-content">
+			<div class="modal-header" style="padding: 10px !important;">
+				<h5 class="modal-title"></h5>
+				<button class="btn btn-sm btn-danger" (click)="closeAnyModal('imageModal')">Close</button>
+			</div>
+			<div class="modal-body">
+                <div class="row">
+                    <div class="col-md-1">
+                      <button class="btn btn-sm btn-danger turn" title="Rotate image">
+                        <i class="fa fa-repeat" aria-hidden="true"></i>
+                      </button>
+                    </div>
+                    <div class="col-md-11" style="max-height: 505px !important;overflow: auto;">
+                      <img [src]="viewImgUrl" class="viewImg" width="400px" height="400px"/>
+                    </div>
+                </div>
+			</div>
+			<div class="modal-footer">
+			</div>
+		</div>	
+	</div>
+</div>
+
+<div id="editRiderModal" data-keyboard="false" data-bs-backdrop="static" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-md" >
+		<div class="modal-content">
+			<div class="modal-header" style="padding: 10px !important;">
+				<h5 class="modal-title"></h5>
+				<button class="btn btn-sm btn-danger" (click)="closeAnyModal('editRiderModal')">Close</button>
+			</div>
+			<div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <label>Name *</label>
+                        <input type="text" [(ngModel)]="editName" class="form-control" placeholder="Name"/>
+                    </div>
+                    <div class="col-md-6">
+                        <label>Mobile *</label>
+                        <input type="text" [(ngModel)]="editMobile" class="form-control" [OnlyNumber]="true" maxlength="10" placeholder="Mobile"/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label>Aadhar No *</label>
+                        <input type="text" [(ngModel)]="editAadharNo" class="form-control" [OnlyNumber]="true" maxlength="12" placeholder="Aadhar No"/>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label>Aadhar Pic</label>
+                        <input type="file" (change)="changeListener($event, '2')" id="file_editAadharBase64" accept=".jpg,.jpeg,.png" class="form-control" />
+                        <input type="hidden" [(ngModel)]="editAadharBase64"/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label>PAN No *</label>
+                        <input type="text" [(ngModel)]="editPanNo" class="form-control" maxlength="10" placeholder="PAN No"/>
+                    </div>
+                    <div class="col-md-6">
+                        <label>PAN Pic</label>
+                        <input type="file" (change)="changeListener($event, '3')" id="file_editPanBase64" accept=".jpg,.jpeg,.png" class="form-control" />
+                        <input type="hidden" [(ngModel)]="editPanBase64"/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <label>Lat-Long *</label>
+                        <input type="text" class="form-control" [(ngModel)]="editRiderLatLong" placeholder="Enter current rider location Lat-Long"/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <label style="display: block;color: transparent;">0</label>
+                        <button class="btn btn-sm btn-success bg-mf-green" (click)="saveRider()">Save</button>
+                    </div>
+                </div>
+			</div>
+			<div class="modal-footer">
+			</div>
+		</div>	
+	</div>
+</div>
+

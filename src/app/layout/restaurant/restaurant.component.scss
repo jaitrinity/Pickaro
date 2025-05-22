@@ -1,0 +1,25 @@
+@import "../../../mealsfly";
+.row{
+    margin: 0px;
+}
+.product{
+    margin: 10px 0px;
+    border: 1px solid $mealsFlyGreen;
+}
+.product .category{
+   
+    background: $mealsFlyGreen;
+    color: white;
+    padding: 5px;
+}
+.product .item{
+    padding: 5px;
+    
+}
+.itemDiv{
+    max-height: 100px;
+    overflow: auto;
+}
+.customize{
+    display: none;
+}

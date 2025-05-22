@@ -1,0 +1,20 @@
+<ul class="unselectable">
+
+    <li [routerLink]="[menu.routerLink]" [routerLinkActive] = '["activeRoute"]' 
+    *ngFor="let menu of menuList"> 
+     {{menu.name}}
+    </li>
+    
+    <!-- <li [routerLink]="[restMenu.routerLink]" [routerLinkActive] = '["activeRoute"]' 
+    *ngFor="let restMenu of restMenuList"> 
+     {{restMenu.name}}
+    </li> -->
+
+    <!-- <li routerLink="./allRestaurant" [routerLinkActive] = '["activeRoute"]'>Restaurant</li> -->
+    <!-- <li routerLink="./product" [routerLinkActive] = '["activeRoute"]'>Product</li> -->
+    <!-- <li routerLink="./rider" [routerLinkActive] = '["activeRoute"]'>Rider</li> -->
+    <!-- <li routerLink="./orders" [routerLinkActive] = '["activeRoute"]'>Orders</li> -->
+    <!-- <li routerLink="./complaint" [routerLinkActive] = '["activeRoute"]'>Complaint</li> -->
+    <!-- <li routerLink="./report" [routerLinkActive] = '["activeRoute"]'>Report</li> -->
+    <!-- <li routerLink="./customer" [routerLinkActive] = '["activeRoute"]'>Customer</li> -->
+</ul>

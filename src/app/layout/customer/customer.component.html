@@ -1,0 +1,69 @@
+<div class="row">
+    <div class="col-md-4">
+        <label style="display: block;color: transparent;">0</label>
+        <!-- <button class="btn btn-sm btn-danger" (click)="getCustomer()">
+            <i class="fa fa-filter" aria-hidden="true"></i> Filter
+        </button> -->
+        &nbsp; 
+        <button class="btn btn-sm btn-danger" (click)="exportCustomer()" *ngIf="searchCustomerList.length != 0">
+            <i class="fa fa-download" aria-hidden="true"></i> Export
+        </button>
+    </div>
+    <div class="col-md-4">
+        <label style="display: block;color: transparent;">0</label>
+        <span class="btn btn-sm" style="color: white; background-color: #00af50;cursor: text;">Total Customer : {{customerList.length}}</span>
+    </div>
+</div>
+<br>
+<div class="row">
+    <div class="col-md-12">
+        <table class="table table-borderd table-striped table-hover my-table">
+            <thead>
+                <tr>
+                    <th style="width: 80px;">SR No</th>
+                    <th>Name</th>
+                    <th>Mobile</th>
+                    <th>Register Date</th>
+                </tr>
+                <tr>
+                    <th>
+                        <input type="text" class="form-control" placeholder="SR No" [(ngModel)]="searchSrNo"
+                        (keyup)="searchCustomer($event)"/>
+                    </th>
+                    <th>
+                        <input type="text" class="form-control" placeholder="Name" [(ngModel)]="searchCustName"
+                        (keyup)="searchCustomer($event)"/>
+                    </th>
+                    <th>
+                        <input type="text" class="form-control" placeholder="Mobile" [(ngModel)]="searchMobile"
+                        (keyup)="searchCustomer($event)"/>
+                    </th>
+                    <th>
+                        <input type="text" class="form-control" placeholder="Register Date" [(ngModel)]="searchRegisterDate"
+                        (keyup)="searchCustomer($event)"/>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let c of searchCustomerList; let rowIndex = index" class="table-row data-{{rowIndex+1}}">
+                    <td>{{c.srNo}}</td>
+                    <td>{{c.custName}}</td>
+                    <td>{{c.mobile}}</td>
+                    <td>{{c.registerDate}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="row" *ngIf="searchCustomerList.length == 0">
+    <div class="col-md-12">
+        <h4 class="text-warning text-center">
+            <i>! No record found</i>
+        </h4>
+    </div>
+</div>
+<app-pagination *ngIf="searchCustomerList.length !=0" 
+        [itemCount]="searchCustomerList.length" 
+        [perPageRecord]="100" 
+        [showPage]="10">
+</app-pagination>

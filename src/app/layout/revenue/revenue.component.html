@@ -1,0 +1,139 @@
+<div class="row">
+    <div class="col-md-2">
+        <label>From Date &nbsp;&nbsp; <i (click)="filterFromDate='';getRevenueData()" class="fa fa-refresh" aria-hidden="true"></i></label>
+        <input type="date" class="form-control" [(ngModel)]="filterFromDate" (change)="getRevenueData()"/>
+    </div>
+    <div class="col-md-2">
+        <label>To Date &nbsp;&nbsp; <i (click)="filterToDate='';getRevenueData()" class="fa fa-refresh" aria-hidden="true"></i></label>
+        <input type="date" class="form-control" [min]="filterFromDate" [(ngModel)]="filterToDate" (change)="getRevenueData()"/>
+    </div>
+    <div class="col-md-2">
+        <label>Pincode &nbsp;&nbsp; <i (click)="filterPincode='';getRevenueData()" class="fa fa-refresh" aria-hidden="true"></i></label>
+        <select class="form-control" [(ngModel)]="filterPincode" (change)="getRevenueData()">
+            <option value="">Select</option>
+            <option [value]="pincode" *ngFor="let pincode of pincodeList">{{pincode}}</option>
+        </select>
+    </div>
+
+    <div class="col-md-4">
+        <label style="display: block;color: transparent;">0</label>
+        <!-- <button class="btn btn-sm btn-danger" (click)="getRevenueData()">
+            <i class="fa fa-filter" aria-hidden="true"></i> Filter
+        </button>
+        &nbsp;  -->
+        <button class="btn btn-sm btn-danger" (click)="exportRevenueData()" *ngIf="revenueList.length != 0">
+            <i class="fa fa-download" aria-hidden="true"></i> Export
+        </button>
+    </div>
+</div>
+<br>
+<div class="row">
+    <div class="col-md-12">
+        <table class="table table-borderd table-striped table-hover my-table">
+            <thead>
+                <tr>
+                    <th>Order Date</th>
+                    <th>Pincode</th>
+                    <th>No Of Order</th>
+                    <th class="price-align">Total Sales</th>
+                    <th class="price-align">Commission Collection</th>
+                    <th class="price-align">Delivery Charge</th>
+                    <th class="price-align">Revenue</th>
+                    <th style="width: 100px;text-align: center;">View</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let r of revenueList" (click)="getSubRevenueList(r)" style="cursor: pointer;">
+                    <td>{{r.OrderDate}}</td>
+                    <td>{{r.Pincode}}</td>
+                    <td>{{r.NoOfOrder}}</td>
+                    <td class="price-align">
+                        <i class="fa fa-inr" aria-hidden="true"></i> {{r.TotalSales}}
+                    </td>
+                    <td class="price-align">
+                        <i class="fa fa-inr" aria-hidden="true"></i> {{r.CommiCollection}}
+                    </td>
+                    <td class="price-align">
+                        <i class="fa fa-inr" aria-hidden="true"></i> {{r.DeliveryCharge}}
+                    </td>
+                    <td class="price-align">
+                        <i class="fa fa-inr" aria-hidden="true"></i> {{r.Revenue}}
+                    </td>
+                    <td (click)="getSubRevenueList(r)" style="cursor: pointer;text-align: center;">
+                        <i class="fa fa-eye" aria-hidden="true"></i>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="row" *ngIf="revenueList.length == 0">
+    <div class="col-md-12">
+        <h4 class="text-warning text-center">
+            <i>! No record found... Please apply correct filter.</i>
+        </h4>
+    </div>
+</div>
+
+<div id="subRevenueModal" data-keyboard="false" data-bs-backdrop="static" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg" >
+        <div class="modal-content">
+            <div class="modal-header" style="padding: 5px !important;">
+				<h6 class="modal-title">{{viewRevenueObj.OrderDate}}</h6>
+				<button class="btn btn-sm btn-danger" (click)="closeAnyModal('subRevenueModal')">Close</button>
+			</div>
+            <div class="modal-body" style="padding: 5px;">
+                <div class="row">
+                    <div class="col-md-12">
+                        <table class="table table-borderd table-striped table-hover my-table">
+                            <thead>
+                                <tr>
+                                    <th>Restaurant Name</th>
+                                    <th class="price-align">Total Price</th>
+                                    <th class="price-align">Commission</th>
+                                    <th class="price-align">Delivery Charge</th>
+                                    <th class="price-align">Revenue</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let sr of subRevenueList">
+                                    <td>{{sr.RestName}}</td>
+                                    <td class="price-align">
+                                        <i class="fa fa-inr" aria-hidden="true"></i> {{sr.TotalPrice}}
+                                    </td>
+                                    <td class="price-align">
+                                        <i class="fa fa-inr" aria-hidden="true"></i> {{sr.Commission}}
+                                    </td>
+                                    <td class="price-align">
+                                        <i class="fa fa-inr" aria-hidden="true"></i> {{sr.DeliveryCharge}}
+                                    </td>
+                                    <td class="price-align">
+                                        <i class="fa fa-inr" aria-hidden="true"></i> {{sr.Revenue}}
+                                    </td>
+                                </tr>
+                                <tr class="total-bg-color">
+                                    <td>Total </td>
+                                    <td class="price-align">
+                                        <i class="fa fa-inr" aria-hidden="true"></i> {{viewRevenueObj.TotalSales}}
+                                    </td>
+                                    <td class="price-align">
+                                        <i class="fa fa-inr" aria-hidden="true"></i> {{viewRevenueObj.CommiCollection}}
+                                    </td>
+                                    <td class="price-align">
+                                        <i class="fa fa-inr" aria-hidden="true"></i> {{viewRevenueObj.DeliveryCharge}}
+                                    </td>
+                                    <td class="price-align">
+                                        <i class="fa fa-inr" aria-hidden="true"></i> {{viewRevenueObj.Revenue}}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!-- <div class="modal-footer">
+			</div> -->
+        </div>
+    </div>
+</div>

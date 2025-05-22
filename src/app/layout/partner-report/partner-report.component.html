@@ -1,0 +1,163 @@
+<div class="row">
+    <div class="col-md-2">
+        <label>Restaurant *</label>
+        <select class="form-control" [(ngModel)]="filterRestaurant">
+            <option value="">Select</option>
+            <option [value]="rest.restId" *ngFor="let rest of restaurantList">{{rest.restName}}</option>
+        </select>
+    </div>
+    <div class="col-md-2">
+        <label>From Date <i (click)="filterFromDate=''" class="fa fa-refresh" aria-hidden="true"></i></label>
+        <input type="date" class="form-control" [(ngModel)]="filterFromDate"/>
+    </div>
+    <div class="col-md-2">
+        <label>To Date <i (click)="filterToDate=''" class="fa fa-refresh" aria-hidden="true"></i></label>
+        <input type="date" class="form-control" [min]="filterFromDate" [(ngModel)]="filterToDate"/>
+    </div>
+    <div class="col-md-4">
+        <label style="display: block;color: transparent;">0</label>
+        <button class="btn btn-sm btn-danger" (click)="getPartnerReport()">
+            <i class="fa fa-filter" aria-hidden="true"></i> Filter
+        </button>
+        &nbsp; 
+        <button class="btn btn-sm btn-danger" (click)="exportData()" *ngIf="searchDataList.length != 0">
+            <i class="fa fa-download" aria-hidden="true"></i> Export
+        </button>
+    </div>
+</div>
+<br>
+<div class="row">
+    <div class="col-md-3">
+        <table class="table table-borderd table-striped table-hover my-table">
+            <thead>
+                <tr>
+                    <th>Order Count</th>
+                    <th>Total Payable Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        {{totalCount}}
+                    </td>
+                    <td>
+                        <i class="fa fa-inr" aria-hidden="true"></i> {{totalPayableAmount}}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <table class="table table-borderd table-striped table-hover my-table">
+            <thead>
+                <tr>
+                    <th style="width: 120px;">Order Id</th>
+                    <th>Order Datetime</th>
+                    <th>Restaurant</th>
+                    <th style="width: 120px;" class="price-align">Sub Total</th>
+                    <th style="width: 120px;" class="price-align">Grand Total</th>
+                    <th style="width: 120px;" class="price-align">Net Payable</th>
+                    <th style="width: 180px;">
+                        <label>
+                            <input type="checkbox" id="check-all-Checkbox" (change)="checkAll()" *ngIf="totalPayableAmount !=0"/>
+                            Pay Status
+                        </label>
+                    </th>
+                </tr>
+                <tr>
+                    <th colspan="4"></th>
+                    <th colspan="2">
+                        <select class="form-control" [(ngModel)]="searchPaymentStatus" (change)="searchOrder($event)">
+                            <option value="">Pay Status</option>
+                            <option value="Pending">Pending</option>
+                            <option value="Paid">Paid</option>
+                        </select>
+                    </th>
+                    <th>
+                        <button *ngIf="checkedAmount != 0" class="btn btn-sm btn-danger" (click)="payAmount()" >
+                            <i class="fa fa-inr" aria-hidden="true"></i> {{checkedAmount}}
+                        </button>
+                    </th>
+                </tr>
+                <tr *ngIf="false">
+                    <th>
+                        <input type="text" class="form-control" placeholder="Order Id" [(ngModel)]="searchOrderId"
+                        (keyup)="searchOrder($event)"/>
+                    </th>
+                    <th>
+                        <input type="text" class="form-control" placeholder="Order Datetime" [(ngModel)]="searchOrderDatetime"
+                        (keyup)="searchOrder($event)"/>
+                    </th>
+                    <th>
+                        <input type="text" class="form-control" placeholder="Restaurant" [(ngModel)]="searchRestName"
+                        (keyup)="searchOrder($event)"/>
+                    </th>
+                    <th>
+                        <input type="text" class="form-control" placeholder="Sub Total" [(ngModel)]="searchSubTotal"
+                        (keyup)="searchOrder($event)"/>
+                    </th>
+                    <th>
+                        <input type="text" class="form-control" placeholder="Grand Total" [(ngModel)]="searchGrandTotal"
+                        (keyup)="searchOrder($event)"/>
+                    </th>
+                    <th>
+                        <input type="text" class="form-control" placeholder="Net Payable" [(ngModel)]="searchPaymentAmount"
+                        (keyup)="searchOrder($event)"/>
+                    </th>
+                    <th>
+                        <input type="text" class="form-control" placeholder="Payment Status" [(ngModel)]="searchPaymentStatus"
+                        (keyup)="searchOrder($event)"/>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let o of searchDataList; let rowIndex = index" class="table-row data-{{rowIndex+1}}">
+                    <td>{{o.orderId}}</td>
+                    <td>{{o.orderDatetime}}</td>
+                    <td>{{o.restName}}</td>
+                    <td class="price-align">
+                        <i class="fa fa-inr" aria-hidden="true"></i> {{o.subTotal}}
+                    </td>
+                    <td class="price-align">
+                        <i class="fa fa-inr" aria-hidden="true"></i> {{o.grandTotal}}
+                    </td>
+                    <td class="price-align">
+                        <i class="fa fa-inr" aria-hidden="true"></i> {{o.payableAmount}}
+                    </td>
+                    <td>
+                        <label>
+                            <input type="checkbox" (change)="changePayment(o)" class="order-pay" id="order-pay-{{o.orderId}}" 
+                            *ngIf="o.paymentStatus == 'Pending' && o.status == 5"/>
+                            <span [ngClass]="{'text-mealsfly-green' : o.paymentStatus == 'Paid'}">
+                                {{o.paymentStatus}}
+                            </span>
+                        </label>
+                    </td>
+                </tr>
+                <!-- <tr *ngIf="checkedAmount != 0">
+                    <td colspan="6"></td>
+                    <td>
+                        <button class="btn btn-sm btn-danger" (click)="payAmount()" >
+                            <i class="fa fa-inr" aria-hidden="true"></i> {{checkedAmount}} Pay
+                        </button>
+                    </td>
+                </tr> -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="row" *ngIf="searchDataList.length == 0">
+    <div class="col-md-12">
+        <h4 class="text-warning text-center">
+            <i>! No record found... Please apply correct filter.</i>
+        </h4>
+    </div>
+</div>
+<app-pagination *ngIf="searchDataList.length !=0" 
+        [itemCount]="searchDataList.length" 
+        [perPageRecord]="100" 
+        [showPage]="10">
+</app-pagination>

@@ -1,0 +1,94 @@
+<div class="row">
+    <div class="col-md-2">
+        <label>From Date <i (click)="filterFromDate=''" class="fa fa-refresh" aria-hidden="true"></i></label>
+        <input type="date" class="form-control" [(ngModel)]="filterFromDate"/>
+    </div>
+    <div class="col-md-2">
+        <label>To Date <i (click)="filterToDate=''" class="fa fa-refresh" aria-hidden="true"></i></label>
+        <input type="date" class="form-control" [min]="filterFromDate" [(ngModel)]="filterToDate"/>
+    </div>
+    <div class="col-md-4">
+        <label style="display: block;color: transparent;">0</label>
+        <button class="btn btn-sm btn-danger" (click)="getComplaintList()">
+            <i class="fa fa-filter" aria-hidden="true"></i> Filter
+        </button>
+    </div>
+</div>
+<br>
+<div class="row">
+    <div class="col-md-12">
+        <table class="table table-borderd table-striped my-table">
+            <thead>
+                <tr>
+                    <th style="width: 80px;">Id</th>
+                    <th>Raise By</th>
+                    <th>Mobile</th>
+                    <th>Issue</th>
+                    <th>Remark</th>
+                    <th>Raise Date</th>
+                    <th style="width: 120px;">Status</th>
+                </tr>
+                <tr>
+                    <th>
+                        <input type="text" class="form-control" placeholder="Id" [(ngModel)]="searchId"
+                        (keyup)="searchComplaint()"/>
+                    </th>
+                    <th>
+                        <input type="text" class="form-control" placeholder="Raise By" [(ngModel)]="searchRaiseBy"
+                        (keyup)="searchComplaint()"/>
+                    </th>
+                    <th>
+                        <input type="text" class="form-control" placeholder="Mobile" [(ngModel)]="searchMobile"
+                        (keyup)="searchComplaint()"/>
+                    </th>
+                    <th>
+                        <input type="text" class="form-control" placeholder="Issue" [(ngModel)]="searchIssue"
+                        (keyup)="searchComplaint()"/>
+                    </th>
+                    <th>
+                        <input type="text" class="form-control" placeholder="Remark" [(ngModel)]="searchRemark"
+                        (keyup)="searchComplaint()"/>
+                    </th>
+                    <th>
+                        <input type="text" class="form-control" placeholder="Raise Date" [(ngModel)]="searchRaiseDate"
+                        (keyup)="searchComplaint()"/>
+                    </th>
+                    <th>
+                        <input type="text" class="form-control" placeholder="Status" [(ngModel)]="searchStatus"
+                        (keyup)="searchComplaint()"/>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let comp of searchComplaintList; let rowIndex = index" class="table-row data-{{rowIndex+1}}">
+                    <td>{{comp.Id}}</td>
+                    <td>{{comp.RaiseBy}}</td>
+                    <td>{{comp.Mobile}}</td>
+                    <td>{{comp.Issue}}</td>
+                    <td>{{comp.Remark}}</td>
+                    <td>{{comp.CreateDate}}</td>
+                    <td>
+                        <span [ngClass]="{'text-mealsfly-green': comp.Status == 'Close'}">{{comp.Status}}</span>
+                        &nbsp;
+                        <label (click)="changeComplaintStatus(comp.Id, 'Close')" *ngIf="comp.Status == 'Open'">
+                            <i class="fa fa-toggle-off" aria-hidden="true"></i>
+                        </label>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<app-pagination *ngIf="searchComplaintList.length !=0" 
+    [itemCount]="searchComplaintList.length" 
+    [perPageRecord]="10" 
+    [showPage]="10">
+</app-pagination>
+
+<div class="row" *ngIf="searchComplaintList.length == 0">
+    <div class="col-md-12">
+        <h4 class="text-warning text-center">
+            <i>! No record found</i>
+        </h4>
+    </div>
+</div>

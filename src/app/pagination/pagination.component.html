@@ -1,0 +1,18 @@
+<div class="row" *ngIf="noOfPage > 1">
+    <div class="col-md-4"></div>
+    <div class="col-md-3">
+      <select class="input-sm form-control" id = "page-select" (change)="changePagination($event)" *ngIf="paginationArr.length > 1">
+        <option [value] = "ii" *ngFor="let pp of paginationArr;let ii = index;">{{pp}}</option>
+      </select>
+    </div>
+    
+    <div class="col-md-5 allPages">
+      <p *ngFor="let p of paginationArr;let i = index;" id="div{{i}}">
+        <span title="Begin" class="my-pagination" *ngIf="i != 0" (click)="gotoBeginEnd(i,0)"><i class="fa fa-angle-double-left"></i></span>
+        <span title="Previous" class="my-pagination" id="pre{{i}}" *ngIf = "i != 0" (click)="gotoPrev(i)"><i class="fa fa-angle-left"></i></span>
+        <span *ngFor="let page of p?.split(',')" class="my-pagination my-pagination_{{page}}" (click)="loadPage(page)">{{page}}</span>
+        <span title="Next" class="my-pagination" id="next{{i}}" *ngIf = "i < paginationArr.length -1 " (click)="gotoNext(i)"><i class="fa fa-angle-right"></i></span>
+        <span title="End" class="my-pagination" *ngIf="i < paginationArr.length - 1" (click)="gotoBeginEnd(i,paginationArr.length - 1)"><i class="fa fa-angle-double-right"></i></span>
+      </p>
+    </div>
+</div>

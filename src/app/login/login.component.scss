@@ -1,0 +1,17 @@
+@import "../../mealsfly";
+.parent{
+	display: grid;
+	place-content: center;
+	height: 100vh;
+    background: linear-gradient($mealsFlyRed, $mealsFlyGreen);
+}
+.parent div.form-field{
+	border: 1px solid;
+    border-radius: 10px;
+    padding: 10px;
+    background: white;
+}
+.activebutton {
+    background-color: $mealsFlyGreen;
+    color: white;
+}

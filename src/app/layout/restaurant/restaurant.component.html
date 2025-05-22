@@ -1,0 +1,286 @@
+<table class="table table-borderd table-striped my-table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Mobile</th>
+            <th>Address</th>
+            <th>Image</th>
+            <th>Banner</th>
+            <th>Priority</th>
+            <th>Approve</th>
+            <th>Enable</th>
+            <th>View</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let rest of restList">
+            <td>{{rest.name}}</td>
+            <td>{{rest.mobile}}</td>
+            <td>{{rest.address}} 
+                <a *ngIf="isTrue(rest.address)" href="https://www.google.co.in/maps/search/{{rest.latLong}}" target="_blank">
+                    <i class="fa fa-map-marker" title="View location on map" aria-hidden="true"></i>
+                </a>
+            </td>
+            <td>
+                <label *ngIf="isTrue(rest.image)" (click)="viewRestImage(rest.image)">
+                    <i class="fa fa-picture-o" title="View big image" aria-hidden="true"></i>
+                </label>
+            </td>
+            <td>
+                <label *ngIf="isTrue(rest.banner)" (click)="viewRestImage(rest.banner)">
+                    <i class="fa fa-picture-o" title="View big image" aria-hidden="true"></i>
+                </label>
+            </td>
+            <td>{{rest.displayOrder}}</td>
+            <td>
+                <div *ngIf="rest.approve == 0;">
+                    <label (click)="appRejRestaurant(rest.restId, 1, 'Approve')"title="Approve">
+                        <i class="fa fa-check-circle-o" aria-hidden="true"></i>
+                    </label> &nbsp;
+                    <label (click)="appRejRestaurant(rest.restId, 2, 'Reject')" title="Reject">
+                        <i class="fa fa-times-circle-o" aria-hidden="true"></i>
+                    </label>
+                </div>
+                <div *ngIf="rest.approve == 1;">
+                    <label (click)="appRejRestaurant(rest.restId, 2, 'Reject')" title="Reject">
+                        <i class="fa fa-times-circle-o" aria-hidden="true"></i>
+                    </label>
+                </div>
+                <div *ngIf="rest.approve == 2;">
+                    <label (click)="appRejRestaurant(rest.restId, 1, 'Approve')" title="Approve">
+                        <i class="fa fa-check-circle-o" aria-hidden="true"></i>
+                    </label>
+                </div>
+            </td>
+            <td>
+                <div *ngIf="rest.approve == 1">
+                    <div *ngIf="rest.enable == 0 || rest.enable == 2">
+                        <label (click)="enaDisRestaurant(rest.restId, 1, 'Enable')" title="Enable">
+                            <i class="fa fa-toggle-on" aria-hidden="true"></i>
+                        </label>
+                    </div>
+                    <div *ngIf="rest.enable == 1;">
+                        <label (click)="enaDisRestaurant(rest.restId, 2, 'Disable')" title="Disable">
+                            <i class="fa fa-toggle-off" aria-hidden="true"></i>
+                        </label>
+                    </div>
+                </div>
+            </td>
+            <td>
+                <div *ngIf="rest.approve == 1">
+                    <label (click)="getRestItem(rest)" title="View items">
+                        <i class="fa fa-eye" aria-hidden="true"></i>
+                    </label>
+                </div>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<div id="viewRestModal" data-keyboard="false" data-bs-backdrop="static" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-lg" >
+		<div class="modal-content">
+			<div class="modal-header" style="padding: 10px !important;">
+				<h5 class="modal-title">{{viewRestName}} </h5>
+				<button class="btn btn-sm btn-danger" (click)="closeAnyModal('viewRestModal')">Close</button>
+			</div>
+			<div class="modal-body">
+                <div class="row">
+                    <div class="col-md-8">
+                        <label>Category <i class="fa fa-plus-circle" aria-hidden="true" (click)="addNewCategory()" title="Add new category"></i></label> 
+                        <select class="form-control" [(ngModel)]="category" (change)="getCategoryItem()">
+                            <option value="">Select</option>
+                            <option *ngFor="let cat of categoryList" [value]="cat.catId">{{cat.catName}}</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4" *ngIf="category !=''">
+                        <label style="display: block;color: transparent;">0</label>
+                        <button class="btn btn-sm btn-info text-white" (click)="addCatItem()">Add Item</button>
+                    </div>
+                </div>
+                <div class="productDiv" style="max-height: 400px; overflow: auto;">
+                    <div *ngFor="let restCat of tempRestItemList" class="product">
+                        <div class="category row">
+                            <div class="col-md-8">{{restCat.name}} :: Total items - {{restCat.itemSize}}</div>
+                        </div>
+                        <div class="itemDiv">
+                            <div class="row item">
+                                <div class="col-md-2" style="font-size: 12px;" *ngFor="let restItem of restCat.itemList">
+                                    <div style="border: 1px solid gray; border-radius: 10px;padding: 5px;">
+                                        <div class="text-center">
+                                            {{restItem.itemName}} 
+                                            &nbsp; <i class="fa fa-picture-o" *ngIf="restItem.image != ''" aria-hidden="true" (click)="viewImage(restItem.image)"></i>
+                                            &nbsp; <i class="fa fa-trash" aria-hidden="true" title="Delete this item" (click)="deleteItem(restItem.itemId)"></i>
+                                        </div> 
+                                        <div class="text-center" *ngFor="let ul of restItem.itemUnitList">
+                                            {{ul.unit}} &nbsp;
+                                            <i class="fa fa-inr" aria-hidden="true"></i> {{ul.price}}
+                                        </div>
+                                        <div>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+                
+			</div>
+			<div class="modal-footer">
+			</div>
+		</div>	
+	</div>
+</div>
+
+<div id="addItemModal" data-keyboard="false" data-bs-backdrop="static" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-xl" >
+		<div class="modal-content">
+			<div class="modal-header" style="padding: 10px !important;">
+				<h5 class="modal-title">{{viewRestName}} - {{addCatName}}</h5>
+				<button class="btn btn-sm btn-danger" (click)="cancelAddItemModel();">Cancel</button>
+			</div>
+			<div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <span class="text-warning">! {{imgInfo}}</span>
+                    </div>
+                </div>
+                <div style="max-height: 300px; overflow: auto;">
+                    <div class="row" *ngFor="let item of createRange(addMore);">
+                        <div class="col-md-2">
+                            <label>Name {{item}}</label>
+                            <input type="text" class="form-control resetField" id="itemName{{item}}"/>
+                        </div>
+                        <div class="col-md-2">
+                            <label>Image {{item}}</label>
+                            <input type="file" id="file_itemImage{{item}}" accept=".jpg,.jpeg,.png" (change)="changeListener($event, item)" class="form-control resetField" />
+                            <input type="hidden" id="txt_itemImage{{item}}" class="form-control resetField"/>
+                        </div>
+                        <div class="col-md-2">
+                            <label>Customize {{item}}</label>
+                            <select class="form-control resetField" id="itemCustomize{{item}}" (change)="showUnit(item)">
+                                <option value="">Select</option>
+                                <option *ngFor="let ul of unitList" [value]="ul.custId">{{ul.custVal}}</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2" *ngFor="let su of showUnit(item)">
+                            <label><i class="fa fa-inr" aria-hidden="true"></i> {{su}} {{item}}</label>
+                            <input type="text" class="form-control resetField" [OnlyNumber]="true" id="item{{su}}{{item}}"/>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-3">
+                        <label style="display: block;color: transparent;">0</label>
+                        <button class="btn btn-sm btn-info text-white" (click)="addMoreItem()">
+                            <i class="fa fa-plus-circle" title="Add more item" aria-hidden="true" ></i>
+                        </button> &nbsp;
+                        <button *ngIf="addMore > 1" class="btn btn-sm btn-warning text-white" (click)="removeItem()">
+                            <i class="fa fa-minus-circle" title="remove last item" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                    <div class="col-md-3">
+                        <label style="display: block;color: transparent;">0</label>
+                        <button class="btn btn-sm btn-success bg-mf-green" (click)="submitItem()">Submit</button>
+                    </div>
+                </div>
+			</div>
+			<div class="modal-footer">
+			</div>
+		</div>	
+	</div>
+</div>
+
+<div id="newCategoryModal" data-keyboard="false" data-bs-backdrop="static" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-md" >
+		<div class="modal-content">
+			<div class="modal-header" style="padding: 10px !important;">
+				<h5 class="modal-title"></h5>
+				<button class="btn btn-sm btn-danger" (click)="closeAndOpenModal('newCategoryModal','viewRestModal')">Cancel</button>
+			</div>
+			<div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <span class="text-warning">! {{imgInfo}}</span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <label>Category</label>
+                        <input type="text" class="form-control" [(ngModel)]="newCatName"/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <label>Image</label>
+                        <input type="file" id="file_catImage" accept=".jpg,.jpeg,.png" (change)="changeListener($event,0)" class="form-control" />
+                        <input type="hidden" [(ngModel)]="catImageBase64" class="form-control"/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <label style="display: block;color: transparent;">0</label>
+                        <button class="btn btn-sm btn-success bg-mf-green" (click)="submitCategory()">Submit</button>
+                    </div>
+                </div>
+			</div>
+			<div class="modal-footer">
+			</div>
+		</div>	
+	</div>
+</div>
+
+<div id="restImageModal" data-keyboard="false" data-bs-backdrop="static" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-md" >
+		<div class="modal-content">
+			<div class="modal-header" style="padding: 10px !important;">
+				<h5 class="modal-title"></h5>
+				<button class="btn btn-sm btn-danger" (click)="closeAnyModal('restImageModal')">Close</button>
+			</div>
+			<div class="modal-body">
+                <div class="row">
+                    <div class="col-md-1">
+                      <button class="btn btn-sm btn-danger turn" title="Rotate image">
+                        <i class="fa fa-repeat" aria-hidden="true"></i>
+                      </button>
+                    </div>
+                    <div class="col-md-11" style="max-height: 505px !important;overflow: auto;">
+                      <img [src]="viewImgUrl" class="viewImg" width="400px" height="400px"/>
+                    </div>
+                </div>
+			</div>
+			<div class="modal-footer">
+			</div>
+		</div>	
+	</div>
+</div>
+
+<div id="imageModal" data-keyboard="false" data-bs-backdrop="static" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-md" >
+		<div class="modal-content">
+			<div class="modal-header" style="padding: 10px !important;">
+				<h5 class="modal-title"></h5>
+				<button class="btn btn-sm btn-danger" (click)="closeAndOpenModal('imageModal','viewRestModal')">Close</button>
+			</div>
+			<div class="modal-body">
+                <div class="row">
+                    <div class="col-md-1">
+                      <button class="btn btn-sm btn-danger turn" title="Rotate image">
+                        <i class="fa fa-repeat" aria-hidden="true"></i>
+                      </button>
+                    </div>
+                    <div class="col-md-11" style="max-height: 505px !important;overflow: auto;">
+                      <img [src]="viewImgUrl" class="viewImg" width="400px" height="400px"/>
+                    </div>
+                </div>
+			</div>
+			<div class="modal-footer">
+			</div>
+		</div>	
+	</div>
+</div>
