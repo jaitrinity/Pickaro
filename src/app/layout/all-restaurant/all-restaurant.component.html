@@ -1,12 +1,31 @@
 <div class="row">
-    <!-- <div class="col-md-3">
-        <label>Pincode</label>
-        <select class="form-control" [(ngModel)]="filterPincode" (change)="filterRestaurant()">
-            <option value="">Select</option>
-            <option *ngFor="let rp of restPincodeList" [value]="rp">{{rp}}</option>
-        </select>
-    </div> -->
     <div class="col-md-12">
+        <h6 class="text-danger"><i>* Enter any of value then search...</i></h6>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-2">
+        <label>Pincode *</label>
+        <!-- <select class="form-control" [(ngModel)]="filterPincode" (change)="filterRestaurant()">
+            <option value="">Select</option>
+            <option *ngFor="let rp of restPincodeList" [value]="rp.pincode">{{rp.pincode}}</option>
+        </select> -->
+        <input placeholder="Enter pincode" list="allPincodes" class="form-control" [(ngModel)]="filterPincode" />
+        <datalist id="allPincodes">
+            <option *ngFor="let rp of restPincodeList" [value]="rp.pincode">{{rp.pincode}}</option>
+        </datalist>
+    </div>
+    <div class="col-md-2">
+        <label>Mobile *</label>
+        <input placeholder="Enter mobile" class="form-control" [(ngModel)]="filterMobile" />
+    </div>
+    <div class="col-md-2">
+        <label style="display: block;color: transparent;">0</label>
+        <button class="btn btn-sm btn-info text-white" (click)="filterRestaurant()">
+            <i class="fa fa-search" aria-hidden="true" ></i> Search
+        </button>
+    </div>
+    <div class="col-md-6 text">
         <label style="display: block;color: transparent;">0</label>
         <button class="btn btn-sm btn-info text-white" (click)="openAnyModal('newRestModal')">
             <i class="fa fa-plus-circle" aria-hidden="true" ></i> New Restaurant
@@ -26,6 +45,7 @@
                 <tr>
                     <th style="width: 120px;">Priority</th>
                     <th>Name</th>
+                    <th>Mobile</th>
                     <th style="width: 200px">Open Time - Close Time</th>
                     <th>Rider</th>
                     <th style="width: 120px" title="Minimum Order Price">MOP <i class="fa fa-info-circle" aria-hidden="true"></i> </th>
@@ -43,6 +63,10 @@
                         <input type="text" class="form-control" placeholder="Name" [(ngModel)]="searchRestName"
                         (keyup)="searchRestaurant($event)"/>
                     </th>
+                    <th>
+                        <input type="text" class="form-control" placeholder="Mobile" [(ngModel)]="searchRestMobile"
+                        (keyup)="searchRestaurant($event)"/>
+                    </th>
                     <th></th>
                     <th></th>
                     <th></th>
@@ -55,8 +79,8 @@
                         (keyup)="searchRestaurant($event)"/>
                     </th>
                     <th>
-                        <input type="text" class="form-control" placeholder="Pincode" [(ngModel)]="searchRestPincode"
-                        (keyup)="searchRestaurant($event)"/>
+                        <!-- <input type="text" class="form-control" placeholder="Pincode" [(ngModel)]="searchRestPincode"
+                        (keyup)="searchRestaurant($event)"/> -->
                     </th>
                     <th></th>
                 </tr>
@@ -75,6 +99,7 @@
                         </div>
                     </td>
                     <td>{{rest.name}}</td>
+                    <td>{{rest.mobile}}</td>
                     <td>{{rest.openCloseTime}}</td>
                     <td>
                         <div class="riderLbl" id="labelRider-{{rest.restId}}">
@@ -136,6 +161,13 @@
                 </tr>
             </tbody>
         </table>
+    </div>
+</div>
+<div class="row" *ngIf="searchRestList.length == 0">
+    <div class="col-md-12">
+        <h4 class="text-warning text-center">
+            <i>! No record found... Please enter correct value then search.</i>
+        </h4>
     </div>
 </div>
 <app-pagination *ngIf="searchRestList.length !=0" 

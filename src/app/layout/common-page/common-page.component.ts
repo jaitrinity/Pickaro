@@ -762,7 +762,7 @@ export class CommonPageComponent implements OnInit {
   }
 
   downloadFormat(){
-    let link = Constant.phpServiceURL+"/Format/ImportItem.xlsx";
+    let link = Constant.phpServiceURL+"Format/ImportItem.xlsx";
     window.open(link);
   }
 

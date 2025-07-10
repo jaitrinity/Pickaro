@@ -36,7 +36,8 @@ export class AllRestaurantComponent implements OnInit {
   restList:any = [];
   searchRestList:any = [];
   restPincodeList:any = [];
-  // filterPincode: any = "";
+  filterMobile: any = "";
+  filterPincode: any = "";
 
   multiSelectropdownSettings = {};
   singleSelectropdownSettings = {};
@@ -77,8 +78,24 @@ export class AllRestaurantComponent implements OnInit {
       allowSearchFilter: true,
       closeDropDownOnSelection: true
     };
+    this.getAllRestPincode();
     this.getAllRider();
     this.getRestList();
+  }
+
+  getAllRestPincode(){
+    let jsonData = {
+      searchType:"allRestPincode"
+    }
+    this.sharedService.getAllList(jsonData)
+    .pipe(take(1)).subscribe({
+      next: result=>{
+        this.restPincodeList = result;
+      },
+      error: _=>{
+        this.layout.errorSnackBar(Constant.returnServerErrorMessage("allRestPincode"));
+      }
+    })
   }
 
   getAllRider(){
@@ -97,16 +114,22 @@ export class AllRestaurantComponent implements OnInit {
   }
 
   getRestList(){
+    if(this.filterPincode == "" && this.filterMobile == ""){
+      this.restList = [];
+      this.searchRestList = [];
+      return;
+    }
     this.layout.spinnerShow();
     let jsonData = {
-      searchType:"restaurant"
+      searchType:"restaurant",
+      filterMobile: this.filterMobile,
+      filterPincode: this.filterPincode
     }
     this.sharedService.getAllList(jsonData)
     .pipe(take(1)).subscribe({
       next: result=>{
         this.restList = result.restList;
         this.searchRestList = this.restList;
-        this.restPincodeList = result.restPincodeList;
         this.layout.spinnerHide();
 
         this.searchRestaurant("");
@@ -294,6 +317,10 @@ export class AllRestaurantComponent implements OnInit {
     })
   }
 
+  filterRestaurant(){
+    this.getRestList();
+  }
+
   // filterRestaurant(){
   //   this.searchRestList = this.restList.filter
   //   (
@@ -323,6 +350,7 @@ export class AllRestaurantComponent implements OnInit {
         { 
           displayOrder: any;
           name: any;
+          mobile: any;
           status:any;
           enableTxt:any;
           pincode:any;
@@ -330,6 +358,7 @@ export class AllRestaurantComponent implements OnInit {
       ) => 
       x.displayOrder.trim().includes(this.searchRestPriority) && 
       x.name.trim().toLowerCase().includes(this.searchRestName.toLowerCase()) && 
+      x.mobile.trim().toLowerCase().includes(this.searchRestMobile.toLowerCase()) && 
       x.status.trim().toLowerCase().includes(this.searchRestStatus.toLowerCase()) && 
       x.enableTxt.trim().toLowerCase().includes(this.searchRestEnable.toLowerCase()) && 
       x.pincode.trim().toLowerCase().includes(this.searchRestPincode.toLowerCase())

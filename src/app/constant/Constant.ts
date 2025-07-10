@@ -1,7 +1,7 @@
 export class Constant{
     // Prod
-    public static phpServiceURL = "https://www.trinityapplab.in/Pickaro/";
-    // public static phpServiceURL = "/Pickaro/"
+    // public static phpServiceURL = "https://trinityapplab.in/Pickaro/";
+    public static phpServiceURL = "/Pickaro/"
 
     public static SUCCESSFUL_STATUS_CODE = "200";
     public static PICKARO_PRIVATE_KEY = "PICKAROPRIVATEKEY";
